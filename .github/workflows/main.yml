@@ -1,0 +1,32 @@
+name: Holiday Bot
+
+on:
+  schedule:
+    # Запускаем каждый день в 09:00 UTC (12:00 МСК)
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # Позволяет запускать вручную
+
+jobs:
+  check-holidays:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        
+    - name: Run Holiday Bot
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+        GOOGLE_SHEET_URL: ${{ secrets.GOOGLE_SHEET_URL }}
+      run: |
+        python holiday_bot.py
